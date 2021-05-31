@@ -4,6 +4,8 @@
 #   This script is used to either encrypt or decrypt a file using AES
 #
 
+require 'openssl'
+require 'base64'
 require 'optparse'
 
 

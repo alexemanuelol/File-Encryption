@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
 ruby '2.7.3'
 
-gem 'aes', '~> 0.5.1'
+gem 'openssl', '~> 2.2'
+gem 'base64', '~> 0.1.0'
