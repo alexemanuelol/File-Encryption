@@ -48,6 +48,11 @@ class ArgParser
             exit 1
         end
 
+        if options.empty?
+            puts opts
+            exit 1
+        end
+
         return options
     end
 end
