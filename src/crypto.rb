@@ -22,11 +22,14 @@ class Cryptography
         return Base64.encode64(cipher.update(data.to_s.strip) + cipher.final)
     end
 
-    def encrypt_file(path, password)
+    def encrypt_file(path, password, output=nil)
         dirname = File.dirname(path)
         filename = File.basename(path, '.*')
         extension = File.extname(path)
-        output = dirname + '/' + filename + '_encrypted' + extension
+
+        if output == nil
+            output = dirname + '/' + filename + '_encrypted' + extension
+        end
 
         buf = ''
         File.open(output, 'wb') do |outf|
@@ -46,11 +49,14 @@ class Cryptography
         return cipher.update(base64_decoded) + cipher.final
     end
 
-    def decrypt_file(path, password)
+    def decrypt_file(path, password, output=nil)
         dirname = File.dirname(path)
         filename = File.basename(path, '.*')
         extension = File.extname(path)
-        output = dirname + '/' + filename + '_decrypted' + extension
+
+        if output == nil
+            output = dirname + '/' + filename + '_decrypted' + extension
+        end
 
         File.open(output, 'wb') do |outf|
             File.open(path, 'rb') do |inf|
@@ -93,6 +99,10 @@ class ArgParser
                 options[:password] = password
             end
 
+            opts.on("-o", "--output output", "The output file name.") do |output|
+                options[:output] = output
+            end
+
             opts.on("-h", "--help", "Display this help text and exit.") do
                 puts opts
                 exit
@@ -131,12 +141,16 @@ end
 options = ArgParser.parse(ARGV)
 crypt = Cryptography.new()
 
+if !options.key?(:output)
+    options[:output] = nil
+end
+
 begin
     if options.key?(:encrypt)
-        crypt.encrypt_file(options[:encrypt], options[:password])
+        crypt.encrypt_file(options[:encrypt], options[:password], options[:output])
         puts 'Successfully encrypted.'
     elsif options.key?(:decrypt)
-        crypt.decrypt_file(options[:decrypt], options[:password])
+        crypt.decrypt_file(options[:decrypt], options[:password], options[:output])
         puts 'Successfully decrypted.'
     end
 rescue Exception => e
